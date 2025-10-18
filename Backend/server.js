@@ -1,31 +1,28 @@
 import express from 'express';
 import cors from 'cors';
-import sampleRoutes from './routes/sample.routes.js';
 import dotenv from 'dotenv';
 import connectToDb from './db/db.js';
-import user from './models/user.model.js';
+import sampleRoutes from './routes/sample.routes.js';
 import userRoutes from './routes/user.routes.js';
+import userModel from './models/user.model.js';
 
 import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}));
-
 connectToDb();
 
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Create Session with Cookie.
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -33,7 +30,7 @@ app.use(session({
     cookie: {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax'
+        sameSite: "lax"
     }
 }));
 
@@ -43,40 +40,41 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:4000/auth/google/callback' 
-}, async (accessToken, refreshToken, profile, done) => {
+    callbackURL: 'http://localhost:4000/users/auth/google/callback'
+}, async (accessToken, refreshToken, profile, done)=> {
     try {
-        let User = await user.findOne({ googleId: profile.id });
-        if(!User) {
-            User = await user.create({
+        let user = await userModel.findOne({ googleId: profile.id });
+        if(!user) {
+            user = await userModel.create({
                 username: {
                     firstname: profile.name.givenName,
-                    lastname : profile.name.familyName
+                    lastname: profile.name.familyName
                 },
                 email: profile.emails[0].value,
                 googleId: profile.id,
                 status: "online"
             });
+            user.save();
         }
-        return done(null, User);
+        return done(null, user);
     } catch (error) {
         return done(error, null);
     }
 }));
 
-// Save the loggedIn user in Session
-passport.serializeUser((User, done) => {
-    done(null, User._id);
+// Serialize user (save the userId into session).
+passport.serializeUser((user, done) => {
+    done(null, user.id);
 });
 
-// Get(Retrieval) the user from Session
+// Deserialize user (retrieval of user info from session).
 passport.deserializeUser(async (id, done) => {
-    const User = await user.findById(id);
-    done(null, User);
+    const user = await userModel.findById(id);
+    done(null, user);
 });
 
 app.use('/api', sampleRoutes);
-app.use('/', userRoutes);
+app.use('/users', userRoutes);
 
 app.listen(port, () => {
     console.log(`Server Listening at ${port}`);

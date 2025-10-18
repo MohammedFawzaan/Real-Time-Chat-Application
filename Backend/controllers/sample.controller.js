@@ -1,4 +1,4 @@
-import sample from "../models/sample.models.js";
+import sample from "../models/sample.model.js";
 
 const sampleGet = (req, res) => {
     res.send("Hi I'm Sample Route");

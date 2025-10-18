@@ -16,8 +16,9 @@ const Home = () => {
 
   const logout = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/logout', { withCredentials: true });
-      localStorage.removeItem('token');
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/auth/logout`, {
+        withCredentials: true
+      });
       toast.success(response.data.message);
       navigate('/');
     } catch (error) {
@@ -29,11 +30,11 @@ const Home = () => {
   return (
     <div>
       <h1 className='text-3xl font-bold underline'>Home</h1>
-      <button onClick={logout}>Logout</button>
       <h3>Name to add into Database</h3>
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       <button onClick={addToDatabase}>Add</button>
       <p>{name}</p>
+      <button onClick={logout}>Logout</button>
     </div>
   )
 }
