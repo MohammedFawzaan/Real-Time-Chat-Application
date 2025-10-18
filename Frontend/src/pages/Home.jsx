@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { UserDataContext } from '../context/UserContext'
 
 const Home = () => {
   const [name, setName] = useState("");
   const navigate = useNavigate();
+
+  const { user } = useContext(UserDataContext);
+  const firstname = user?.userData?.username?.firstname+" "+user?.userData?.username?.lastname;
 
   const addToDatabase = async () => {
     const response = await axios.post('http://localhost:4000/api/addName', { name: name });
@@ -29,7 +33,7 @@ const Home = () => {
 
   return (
     <div>
-      <h1 className='text-3xl font-bold underline'>Home</h1>
+      <h1 className='text-3xl font-bold underline'>Hii!!! {firstname}</h1>
       <h3>Name to add into Database</h3>
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       <button onClick={addToDatabase}>Add</button>
