@@ -18,7 +18,7 @@ const Start = () => {
   return (
     <div>
         <h1>Welcome to Our Chat App</h1>
-        <button onClick={handleClick} >Login with Google</button>
+        <button className='border-black text-white bg-blue-400 active:bg-blue-500 rounded-xl p-2 cursor-pointer' onClick={handleClick} >Login with Google</button>
     </div>
   )
 }

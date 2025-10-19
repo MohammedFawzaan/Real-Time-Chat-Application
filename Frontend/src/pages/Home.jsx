@@ -10,7 +10,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const { user } = useContext(UserDataContext);
-  const firstname = user?.userData?.username?.firstname+" "+user?.userData?.username?.lastname;
+  const firstname = user?.userData?.username?.firstname + " " + user?.userData?.username?.lastname;
 
   const logout = async () => {
     try {
@@ -26,10 +26,16 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h1 className='text-3xl font-bold underline'>Hii!!! {firstname}</h1>
-      <button onClick={logout}>Logout</button>
-      <div>
+    <div className="flex flex-col min-h-screen p-1.5 bg-gray-100">
+      <div className="flex justify-between items-center p-3 mb-4">
+        <h1 className="text-2xl font-bold">Hi!!! {firstname}</h1>
+        <button
+          onClick={logout}
+          className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white rounded-lg px-4 py-2">
+          Logout
+        </button>
+      </div>
+      <div className="flex flex-1 w-full bg-white shadow-md overflow-hidden">
         <SideBar />
         <ChatContainer />
       </div>
