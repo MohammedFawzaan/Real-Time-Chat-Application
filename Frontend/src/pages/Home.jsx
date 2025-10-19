@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +11,8 @@ const Home = () => {
 
   const { user } = useContext(UserDataContext);
   const firstname = user?.userData?.username?.firstname + " " + user?.userData?.username?.lastname;
+
+  const [selectedChat, setSelectedChat] = useState(null);
 
   const logout = async () => {
     try {
@@ -36,8 +38,8 @@ const Home = () => {
         </button>
       </div>
       <div className="flex flex-1 w-full bg-white shadow-md overflow-hidden">
-        <SideBar />
-        <ChatContainer />
+        <SideBar setSelectedChat={setSelectedChat} />
+        <ChatContainer selectedChat={selectedChat} />
       </div>
     </div>
   )
