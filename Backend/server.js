@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectToDb from './db/db.js';
-import sampleRoutes from './routes/sample.routes.js';
 import userRoutes from './routes/user.routes.js';
 import userModel from './models/user.model.js';
+import messageRoutes from './routes/message.routes.js';
 
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -26,10 +26,10 @@ app.use(cookieParser());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: "lax"
     }
 }));
@@ -41,10 +41,10 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: 'http://localhost:4000/users/auth/google/callback'
-}, async (accessToken, refreshToken, profile, done)=> {
+}, async (accessToken, refreshToken, profile, done) => {
     try {
         let user = await userModel.findOne({ googleId: profile.id });
-        if(!user) {
+        if (!user) {
             user = await userModel.create({
                 username: {
                     firstname: profile.name.givenName,
@@ -73,8 +73,8 @@ passport.deserializeUser(async (id, done) => {
     done(null, user);
 });
 
-app.use('/api', sampleRoutes);
 app.use('/users', userRoutes);
+app.use('/messages', messageRoutes);
 
 app.listen(port, () => {
     console.log(`Server Listening at ${port}`);
