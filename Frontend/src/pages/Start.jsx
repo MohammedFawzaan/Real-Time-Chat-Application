@@ -16,9 +16,9 @@ const Start = () => {
   }
 
   return (
-    <div>
-        <h1>Welcome to Our Chat App</h1>
-        <button className='border-black text-white bg-blue-400 active:bg-blue-500 rounded-xl p-2 cursor-pointer' onClick={handleClick} >Login with Google</button>
+    <div className='text-center p-3 mt-3'>
+      <h1 className="text-2xl text-blue-600 font-bold">Welcome to Our Chat App</h1>
+      <button className='bg-blue-500 cursor-pointer active:bg-blue-600 text-white rounded-lg px-4 py-2' onClick={handleClick} >Login with Google</button>
     </div>
   )
 }

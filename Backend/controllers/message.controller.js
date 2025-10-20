@@ -23,7 +23,7 @@ const sendMessages = async (req, res) => {
             receiverId: receiverId
         });
         message.save();
-        res.status(201).json({ message: "New Message Sent" });
+        res.status(201).json({ notify: "New Message Sent", message: message });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Maybe Some Error" });

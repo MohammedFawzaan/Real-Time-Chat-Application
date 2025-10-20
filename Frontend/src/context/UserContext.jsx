@@ -12,7 +12,7 @@ const UserContext = ({ children }) => {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/auth/check`,
           { withCredentials: true }
         );
-        console.log(response.data);
+        // console.log(response.data);
         setUser({
           userData: response.data.userData,
           authenticated: response.data.authenticated
