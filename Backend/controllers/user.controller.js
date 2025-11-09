@@ -1,5 +1,5 @@
 const googleAuthCallBack = async (req, res) => {
-    res.status(200).redirect('https://real-time-chat-application-green-nine.vercel.app/home');
+    res.status(200).redirect('https://real-time-chat-application-cyan-gamma.vercel.app/home');
 }
 
 const getUserData = (req, res) => {

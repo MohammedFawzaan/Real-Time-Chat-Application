@@ -22,7 +22,7 @@ const port = process.env.PORT || 4000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["https://real-time-chat-application-green-nine.vercel.app", "http://localhost:5173"],
+    origin: ["https://real-time-chat-application-cyan-gamma.vercel.app", "http://localhost:5173"],
     credentials: true,
   },
 });
@@ -38,7 +38,7 @@ app.use(cookieParser());
 
 // ✅ CORS
 app.use(cors({
-  origin: ["https://real-time-chat-application-green-nine.vercel.app", "http://localhost:5173"],
+  origin: ["https://real-time-chat-application-cyan-gamma.vercel.app", "http://localhost:5173"],
   credentials: true
 }));
 
