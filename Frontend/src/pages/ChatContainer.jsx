@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { io } from "socket.io-client";
 import { UserDataContext } from "../context/UserContext";
@@ -7,10 +8,17 @@ import { UserDataContext } from "../context/UserContext";
 // ✅ Initialize socket globally (single instance)
 const socket = io(import.meta.env.VITE_BASE_URL, { withCredentials: true });
 
-const ChatContainer = ({ selectedChat }) => {
+const ChatContainer = () => {
   const { user } = useContext(UserDataContext);
   const [allMessages, setAllMessages] = useState([]);
   const [message, setMessage] = useState("");
+
+  const bottomRef = useRef(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const selectedChat = location?.state?.chat;
+  console.log(selectedChat);
 
   // 🟢 Fetch messages whenever chat changes
   useEffect(() => {
@@ -51,6 +59,11 @@ const ChatContainer = ({ selectedChat }) => {
 
     return () => socket.off("receiveMessage");
   }, [selectedChat, user]);
+
+  // Go to Bottom.
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [allMessages]);
 
   // 🟢 Send message (DB + Socket)
   const handleSend = async () => {
@@ -94,78 +107,72 @@ const ChatContainer = ({ selectedChat }) => {
 
   // 🟣 Chat window
   return (
-    <div className="flex-1 flex flex-col p-4">
-      {selectedChat?.email === user?.userData?.email ? (
-        <h2 className="text-lg font-semibold text-indigo-600 mb-2">
-          {selectedChat?.username?.firstname +
-            " " +
-            selectedChat?.username?.lastname}{" "}
-          (You)
-        </h2>
-      ) : (
-        <h3 className="text-lg font-semibold text-indigo-600 mb-2">
-          {selectedChat?.username?.firstname +
-            " " +
-            selectedChat?.username?.lastname}
-        </h3>
-      )}
+    <div className="flex flex-col h-screen bg-gray-100">
 
-      {/* 🟢 Messages Section */}
-      <div className="flex-1 overflow-y-auto p-3 bg-gray-50 rounded-lg border border-gray-200 mb-3">
+      {/* HEADER */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white shadow-md">
+
+        <button
+          onClick={() => navigate("/Home")}
+          className="text-indigo-600 cursor-pointer font-semibold hover:underline">
+          ← Back
+        </button>
+
+        <h2 className="text-lg font-semibold text-indigo-700">
+          {selectedChat?.username?.firstname} {selectedChat?.username?.lastname}
+          {selectedChat?.email === user?.userData?.email && " (You)"}
+        </h2>
+
+        <div className="w-10" /> {/* spacer */}
+      </div>
+
+      {/* MESSAGES BODY */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-white">
+
         {allMessages.length === 0 ? (
           <p className="text-center text-gray-400 mt-4">No Messages Yet...</p>
         ) : (
           allMessages.map((message) => {
-            // ✅ Handle both DB-populated and socket messages
             const senderId =
               message.senderId?._id || message.senderId || message?.user?._id;
-            const receiverId =
-              message.receiverId?._id || message.receiverId || message?.to?._id;
-
-            const isSentByCurrentUser =
-              senderId === user?.userData?._id ||
-              message.sender?.email === user?.userData?.email;
+            const isSentByCurrentUser = senderId === user?.userData?._id;
 
             return (
               <div
-                key={message._id || `${senderId}-${Math.random()}`}
-                className={`flex mb-2 ${
-                  isSentByCurrentUser ? "justify-end" : "justify-start"
-                }`}
-              >
-                <p
-                  className={`max-w-[70%] p-3 text-sm break-words ${
+                key={message._id}
+                className={`flex ${isSentByCurrentUser ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[70%] px-4 py-2 rounded-xl text-sm ${
                     isSentByCurrentUser
-                      ? "bg-blue-500 text-white rounded-l-xl rounded-tr-xl"
-                      : "bg-gray-200 text-gray-800 rounded-r-xl rounded-tl-xl"
-                  }`}
-                >
-                  {message?.text}
-                </p>
+                      ? "bg-indigo-600 text-white rounded-tr-none"
+                      : "bg-gray-200 text-gray-800 rounded-tl-none"
+                  }`}>
+                  {message.text}
+                </div>
               </div>
             );
           })
         )}
+        <div ref={bottomRef} />
       </div>
 
-      {/* 🟢 Input Section */}
-      <div className="mt-3 flex items-center gap-2">
+      {/* INPUT SECTION */}
+      <div className="p-4 bg-white border-t flex gap-3">
         <textarea
           placeholder="Type a message..."
-          required
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex-1 resize-none p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="flex-1 resize-none p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
         />
         <button
           onClick={handleSend}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-        >
+          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
           Send
         </button>
       </div>
     </div>
   );
+
 };
 
 export default ChatContainer;

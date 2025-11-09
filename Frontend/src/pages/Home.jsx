@@ -1,18 +1,35 @@
-import React, { useContext, useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { UserDataContext } from '../context/UserContext'
-import ChatContainer from '../components/ChatContainer'
-import SideBar from '../components/SideBar'
 
 const Home = () => {
   const navigate = useNavigate();
 
   const { user } = useContext(UserDataContext);
-  const firstname = user?.userData?.username?.firstname + " " + user?.userData?.username?.lastname;
+  const name = user?.userData?.username?.firstname + " " + user?.userData?.username?.lastname;
 
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    const getAllChats = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/messages/chats`, {
+          withCredentials: true
+        });
+        setChats(response.data.allUser);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllChats();
+  }, []);
+
+  const handleClick = (chat) => {
+    console.log(chat);
+    navigate("/Chat", { state: { chat } });
+  };
 
   const logout = async () => {
     try {
@@ -25,24 +42,42 @@ const Home = () => {
       console.log(error);
       toast.error('Logout Failed');
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen p-1.5 bg-gray-100">
-      <div className="flex justify-between items-center p-3 mb-4">
-        <h1 className="text-2xl font-bold">Hi!!! {firstname}</h1>
+    <div className="flex items-center justify-center px-3">
+      <div className="w-full max-w-md flex flex-col h-[100vh] p-5">
+
+        {/* Header */}
+        <h1 className="text-xl text-center font-bold truncate m-5">Hi! {name}</h1>
+
+        {/* Chat List */}
+        <div className="flex-1 overflow-y-auto space-y-2">
+          {chats.map((chat) => (
+            <div
+              key={chat._id}
+              onClick={() => handleClick(chat)}
+              className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer transition text-center">
+
+              {chat?.email === user?.userData?.email ? (
+                <p className="font-medium text-gray-900">You</p>
+              ) : (
+                <p className="font-medium text-gray-900">
+                  {chat?.username?.firstname} {chat?.username?.lastname}
+                </p>
+              )}
+              <p className="text-xs text-gray-500">{chat?.email}</p>
+            </div>
+          ))}
+        </div>
         <button
-          onClick={logout}
-          className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white rounded-lg px-4 py-2">
-          Logout
+            onClick={logout}
+            className="bg-blue-500 cursor-pointer hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg p-3">
+            Logout
         </button>
       </div>
-      <div className="flex flex-1 w-full bg-white shadow-md overflow-hidden">
-        <SideBar setSelectedChat={setSelectedChat} />
-        <ChatContainer selectedChat={selectedChat} />
-      </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

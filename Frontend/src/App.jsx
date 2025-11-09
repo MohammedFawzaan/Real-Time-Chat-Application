@@ -1,4 +1,5 @@
 import Home from './pages/Home'
+import ChatContainer from './pages/ChatContainer'
 import { Routes, Route } from 'react-router-dom'
 import { Toaster, toast } from 'react-hot-toast'
 import Start from './pages/Start'
@@ -12,6 +13,11 @@ function App() {
         <Route path='/Home' element={
           <UserProtectedWrapper>
             <Home />
+          </UserProtectedWrapper>
+        } />
+        <Route path='/Chat' element={
+          <UserProtectedWrapper>
+            <ChatContainer />
           </UserProtectedWrapper>
         } />
       </Routes>
