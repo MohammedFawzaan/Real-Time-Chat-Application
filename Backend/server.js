@@ -1,4 +1,3 @@
-// server.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -18,7 +17,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
-// 🔹 Setup HTTP + Socket server
+//🔹Setup HTTP + Socket server
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -48,8 +47,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,           // false for localhost
-    sameSite: 'lax',         // works for OAuth redirect
+    secure: true,
+    sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 }));
