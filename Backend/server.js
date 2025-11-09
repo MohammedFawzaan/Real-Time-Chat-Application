@@ -11,6 +11,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import http from 'http';
 import { Server } from 'socket.io';
+import MongoStore from 'connect-mongo';
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.DB_CONNECTION }),
   cookie: {
     httpOnly: true,
     secure: true,
