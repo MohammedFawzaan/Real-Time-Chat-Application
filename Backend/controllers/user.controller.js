@@ -1,5 +1,5 @@
 const googleAuthCallBack = async (req, res) => {
-    res.status(200).redirect('http://localhost:5173/home');
+    res.status(200).redirect('https://real-time-chat-application-eta.vercel.app/home');
 }
 
 const getUserData = (req, res) => {

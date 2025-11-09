@@ -21,7 +21,7 @@ const port = process.env.PORT || 4000;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"], // your local frontend
+    origin: ["https://real-time-chat-application-eta.vercel.app"], // your local frontend
     credentials: true,
   },
 });
@@ -36,7 +36,7 @@ app.use(cookieParser());
 
 // ✅ CORS
 app.use(cors({
-  origin: ["http://localhost:5173"], // frontend URL
+  origin: ["https://real-time-chat-application-eta.vercel.app"], // frontend URL
   credentials: true
 }));
 
