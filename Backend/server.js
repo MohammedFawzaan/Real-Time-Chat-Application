@@ -1,3 +1,4 @@
+// server.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -17,39 +18,47 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
-//🔹Setup HTTP + Socket server together
+// 🔹 Setup HTTP + Socket server
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173"], // your local frontend
     credentials: true,
   },
 });
 
+// Connect DB
 connectToDb();
 
-app.use(cors({ origin: true, credentials: true }));
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Session
+// ✅ CORS
+app.use(cors({
+  origin: ["http://localhost:5173"], // frontend URL
+  credentials: true
+}));
+
+// ✅ Session setup
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: "lax",
+    secure: false,           // false for localhost
+    sameSite: 'lax',         // works for OAuth redirect
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 }));
 
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google Strategy
+// Google OAuth Strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -84,13 +93,11 @@ passport.deserializeUser(async (id, done) => {
 app.use('/users', userRoutes);
 app.use('/messages', messageRoutes);
 
-// ✅ SOCKET.IO SECTION
+// ✅ Socket.io
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
 
-  // Listen for a message from a client
   socket.on("sendMessage", (data) => {
-    // Emit the message to all connected clients in real time
     io.emit("receiveMessage", data);
   });
 
@@ -99,4 +106,5 @@ io.on("connection", (socket) => {
   });
 });
 
+// Start server
 server.listen(port, () => console.log(`🚀 Server running on port ${port}`));
