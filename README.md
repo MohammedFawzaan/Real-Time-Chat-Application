@@ -85,20 +85,11 @@ VITE_BASE_URL=http://localhost:4000
 
 <hr />
 
-<h2>📸 Screenshots</h2>
-
-<p>(Add screenshots later)</p>
-
-<hr />
-
 <h2>▶️ Deployment Notes</h2>
 
 <ul>
   <li>Backend deployed on <b>Render</b></li>
   <li>Frontend deployed on <b>Vercel/Render</b></li>
-  <li>Update all URLs to your deployed domain</li>
-  <li>Add deployed callback URL to Google Console</li>
-  <li>Enable CORS + cookies</li>
 </ul>
 
 <hr />
