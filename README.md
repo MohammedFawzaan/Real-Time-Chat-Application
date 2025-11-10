@@ -1,11 +1,20 @@
 <h1>🗨️ Real-Time Chat App</h1>
 
 <p>
-A simple real-time chat application built using <b>React</b>, <b>Node.js</b>, <b>Express</b>, 
+A Simple Real-time chat application built using <b>React</b>, <b>Node.js</b>, <b>Express</b>, 
 <b>MongoDB Atlas</b>, <b>Socket.IO</b>, and <b>Google Authentication</b>.
 </p>
 
-<p>This app supports real-time messaging, Google Login, and has clean UI. Fully deployed using Render/Vercel.</p>
+<p>This app supports Real-time Messaging, Google Login, and has clean UI. Fully deployed using Render/Vercel.</p>
+
+<hr />
+
+<h2>🔗 Live Demo</h2>
+<p>
+  <a href="https://real-time-chat-application-cyan-gamma.vercel.app" target="_blank">
+    👉 Click here to view the live app
+  </a>
+</p>
 
 <hr />
 
@@ -47,40 +56,41 @@ A simple real-time chat application built using <b>React</b>, <b>Node.js</b>, <b
 
 <h2>🚀 Installation</h2>
 
-<h3>🔹 Backend Setup</h3>
+<h3>🔹Backend Setup</h3>
 
-<pre>
+<pre><code>
 cd backend
 npm install
 npm start
-</pre>
+</code></pre>
 
 <p>Create a <code>.env</code> file in backend:</p>
 
-<pre>
+<pre><code>
 PORT=4000
 MONGO_URI=your_mongodb_uri
 GOOGLE_CLIENT_ID=your_google_id
 GOOGLE_CLIENT_SECRET=your_google_secret
-GOOGLE_CALLBACK_URL=http://localhost:4000/users/auth/google/callback
+GOOGLE_CALLBACK_URL='http://localhost:4000/users/auth/google/callback'
 SESSION_SECRET=your_secret
 JWT_SECRET=your_jwt_secret
-</pre>
+</code></pre>
 
 <hr />
 
-<h3>🔹 Frontend Setup</h3>
+<h3>🔹Frontend Setup</h3>
 
-<pre>
+<pre><code>
 cd frontend
 npm install
 npm run dev
-</pre>
+</code></pre>
 
 <p>Create a <code>.env</code> file in frontend:</p>
 
-<pre>
+<pre><code>
 VITE_BASE_URL=http://localhost:4000
+</code>
 </pre>
 
 <hr />
@@ -89,7 +99,7 @@ VITE_BASE_URL=http://localhost:4000
 
 <ul>
   <li>Backend deployed on <b>Render</b></li>
-  <li>Frontend deployed on <b>Vercel/Render</b></li>
+  <li>Frontend deployed on <b>Vercel</b></li>
 </ul>
 
 <hr />
