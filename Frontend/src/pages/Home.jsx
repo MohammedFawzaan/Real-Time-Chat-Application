@@ -6,7 +6,7 @@ import { UserDataContext } from '../context/UserContext'
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useContext(UserDataContext);
+  const { user, setUser } = useContext(UserDataContext);
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
@@ -29,9 +29,9 @@ const Home = () => {
 
   const logout = async () => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/auth/logout`, {},
-        { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/auth/logout`, {}, { withCredentials: true });
       toast.success(response.data.message);
+      setUser({ authenticated: false });
       navigate('/');
     } catch (error) {
       console.log(error);

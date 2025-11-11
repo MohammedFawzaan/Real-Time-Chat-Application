@@ -1,14 +1,17 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { UserDataContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast'
 
 const Start = () => {
   const { user } = useContext(UserDataContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(user?.authenticated === true)
-      navigate('/');
+    if(user?.authenticated === true) {
+      toast.success("You are Logged In");
+      navigate('/home');
+    }
   }, [user, navigate]);
 
   const handleClick = () => {

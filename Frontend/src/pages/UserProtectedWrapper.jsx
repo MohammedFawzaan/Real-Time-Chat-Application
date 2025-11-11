@@ -9,7 +9,7 @@ const UserProtectedWrapper = ({children}) => {
 
   useEffect(() => {
     if(user?.authenticated === false) {
-      toast.error("Please Login to use this");
+      toast.error("Please Login to use our webapp");
       navigate('/');
     }
   }, [user, navigate]);
