@@ -13,7 +13,6 @@ const googleAuthCallBack = async (req, res) => {
         sameSite: "lax"
     });
 
-    // res.status(200).redirect('https://real-time-chat-application-cyan-gamma.vercel.app/home');
     return res.status(200).redirect(`${process.env.FRONTEND_URL}/home`);
 }
 
