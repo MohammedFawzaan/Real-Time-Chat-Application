@@ -113,11 +113,14 @@ const ChatContainer = () => {
           ← Back
         </button>
 
-        <h2 className="text-lg font-semibold text-indigo-700">
-          {selectedChat?.username?.firstname} {selectedChat?.username?.lastname}
-          {selectedChat?.email === user?.userData?.email && " (You)"}
-        </h2>
-
+        <div>
+          <h2 className="text-lg font-semibold text-indigo-700">
+            {selectedChat?.username?.firstname} {selectedChat?.username?.lastname}
+            {selectedChat?.email === user?.userData?.email && " (You)"}
+          </h2>
+          <p className="text-xs text-center text-gray-500">{selectedChat?.email}</p>
+        </div>
+        
         <div className="w-10" />
       </div>
 
