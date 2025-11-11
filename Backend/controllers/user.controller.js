@@ -9,8 +9,8 @@ const googleAuthCallBack = async (req, res) => {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: true,
+        sameSite: "none"
     });
 
     return res.status(200).redirect(`${process.env.FRONTEND_URL}/home`);
@@ -26,8 +26,8 @@ const getUserData = (req, res) => {
 const logout = async (req, res, next) => {
     res.clearCookie("token", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
         path: '/'
     });
 
