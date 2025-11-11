@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { io } from "socket.io-client";
 import { UserDataContext } from "../context/UserContext";
 
-// ✅ Initialize socket globally (single instance)
+// Initialize socket globally (single instance)
 const socket = io(import.meta.env.VITE_BASE_URL, { withCredentials: true });
 
 const ChatContainer = () => {
@@ -18,9 +18,8 @@ const ChatContainer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedChat = location?.state?.chat;
-  console.log(selectedChat);
 
-  // 🟢 Fetch messages whenever chat changes
+  // Fetch messages whenever chat changes
   useEffect(() => {
     if (!selectedChat?._id) return;
 
@@ -39,16 +38,15 @@ const ChatContainer = () => {
     getAllMessages();
   }, [selectedChat]);
 
-  // 🟢 Listen for real-time incoming messages
+  // Listen for real-time incoming messages
   useEffect(() => {
     socket.on("receiveMessage", (data) => {
       // Verify the message belongs to this chat
-      if (
-        (data.senderId === selectedChat?._id &&
+      if ((data.senderId === selectedChat?._id &&
           data.receiverId === user?.userData?._id) ||
         (data.receiverId === selectedChat?._id &&
-          data.senderId === user?.userData?._id)
-      ) {
+          data.senderId === user?.userData?._id))
+      {
         setAllMessages((prev) => {
           const exists = prev.some((msg) => msg._id === data._id);
           if (exists) return prev;
@@ -65,7 +63,6 @@ const ChatContainer = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allMessages]);
 
-  // 🟢 Send message (DB + Socket)
   const handleSend = async () => {
     if (!message.trim()) return;
 
@@ -95,7 +92,6 @@ const ChatContainer = () => {
     }
   };
 
-  // 🟣 If no chat selected
   if (!selectedChat)
     return (
       <div className="flex-1 flex flex-col p-4">
@@ -105,7 +101,6 @@ const ChatContainer = () => {
       </div>
     );
 
-  // 🟣 Chat window
   return (
     <div className="flex flex-col h-screen bg-gray-100">
 
@@ -123,7 +118,7 @@ const ChatContainer = () => {
           {selectedChat?.email === user?.userData?.email && " (You)"}
         </h2>
 
-        <div className="w-10" /> {/* spacer */}
+        <div className="w-10" />
       </div>
 
       {/* MESSAGES BODY */}

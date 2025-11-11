@@ -1,5 +1,20 @@
+import jwt from 'jsonwebtoken';
+
 const googleAuthCallBack = async (req, res) => {
-    res.status(200).redirect('https://real-time-chat-application-cyan-gamma.vercel.app/home');
+    const token = jwt.sign(
+        { id: req.user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax"
+    });
+
+    // res.status(200).redirect('https://real-time-chat-application-cyan-gamma.vercel.app/home');
+    return res.status(200).redirect(`${process.env.FRONTEND_URL}/home`);
 }
 
 const getUserData = (req, res) => {
@@ -10,13 +25,14 @@ const getUserData = (req, res) => {
 }
 
 const logout = async (req, res, next) => {
-    req.logOut(() => {
-        req.session.destroy(err => {
-            if (err) return res.status(500).json({ message: "Logout failed" });
-            res.clearCookie("connect.sid");
-            res.json({ message: "Logged out successfully" });
-        });
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: '/'
     });
+
+    return res.json({ message: "Logged Out" });
 }
 
 export { googleAuthCallBack, getUserData, logout };

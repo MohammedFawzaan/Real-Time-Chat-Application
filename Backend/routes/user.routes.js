@@ -7,9 +7,9 @@ const router = Router();
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), googleAuthCallBack);
+router.get('/auth/google/callback', passport.authenticate('google', { session: false }), googleAuthCallBack);
 
-router.get('/auth/logout', logout);
+router.post('/auth/logout', logout);
 
 router.get('/auth/check', authMiddleware, getUserData);
 

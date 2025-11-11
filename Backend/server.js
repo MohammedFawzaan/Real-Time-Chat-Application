@@ -7,11 +7,9 @@ import messageRoutes from './routes/message.routes.js';
 import userModel from './models/user.model.js';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import http from 'http';
 import { Server } from 'socket.io';
-import MongoStore from 'connect-mongo';
 
 dotenv.config();
 
@@ -29,12 +27,9 @@ const io = new Server(server, {
 
 // Connect DB
 connectToDb();
-app.set('trust proxy', 1);
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+// Important for deployment - reverse proxy.
+app.set('trust proxy', 1);
 
 // ✅ CORS
 app.use(cors({
@@ -42,29 +37,19 @@ app.use(cors({
   credentials: true
 }));
 
-// ✅ Session setup
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.DB_CONNECTION }),
-  cookie: {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  }
-}));
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Passport
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'https://real-time-chat-application-vztk.onrender.com/users/auth/google/callback'
+  callbackURL: `${process.env.GOOGLE_CALLBACK_URL}`
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     let user = await userModel.findOne({ googleId: profile.id });
@@ -84,12 +69,6 @@ passport.use(new GoogleStrategy({
     return done(error, null);
   }
 }));
-
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser(async (id, done) => {
-  const user = await userModel.findById(id);
-  done(null, user);
-});
 
 // Routes
 app.use('/users', userRoutes);
